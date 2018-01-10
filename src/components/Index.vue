@@ -7,16 +7,17 @@
       <table class="table">
         <thead class="thead-dark">
           <tr>
+            <th>#</th>
             <th>Agent ID</th>
             <th>Username</th>
             <th>Name</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="user in users" :key="user.id" class="hover">
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
+          <tr v-for="(user, index) in users" :key="user.id" class="hover">
+              <td>{{ index + 1 }}</td>
+              <td>{{ user.username }}</td>
+              <td>{{ user.firstName}} {{ user.lastName}} </td>
           </tr>
         </tbody>
       </table>
@@ -52,6 +53,7 @@ export default {
       fetchData () {
         this.post = null;
         this.loading = true;
+        this.index_count = 1;
 
 
         const options = {
@@ -65,7 +67,9 @@ export default {
             this.loading = false;
             // returns a json format
             console.log(result);
-            this.users = result;
+            this.users = JSON.parse(result);
+
+            console.log(this.users.length);
           }.bind(this))
           .catch(function (err) {
             this.loading = false;
