@@ -11,13 +11,20 @@
             <th>Agent ID</th>
             <th>Username</th>
             <th>Name</th>
+            <th>Edit</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(user, index) in users" :key="user.id" class="hover">
               <td>{{ index + 1 }}</td>
+              <td>{{ user.agentId }}</td>
               <td>{{ user.username }}</td>
               <td>{{ user.firstName}} {{ user.lastName}} </td>
+              <td>
+                <button type="button" class="btn btn-default btn-sm">
+                  <span class="glyphicon glyphicon-pencil"></span> Edit
+                </button>
+              </td>
           </tr>
         </tbody>
       </table>
