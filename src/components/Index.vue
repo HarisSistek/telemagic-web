@@ -64,7 +64,7 @@ export default {
 
 
         const options = {
-          uri: conf.API_SERVER_HOST + '/',
+          uri: conf.API_SERVER_HOST + '/users',
           method: 'GET'
         };
 
