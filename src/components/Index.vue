@@ -21,13 +21,71 @@
               <td>{{ user.username }}</td>
               <td>{{ user.firstName}} {{ user.lastName}} </td>
               <td>
-                <button type="button" class="btn btn-default btn-sm">
+                <button type="button" class="btn btn-default btn-sm"
+                        @click="show_user(user)"
+                        data-toggle="modal"
+                        data-target="#modal-update-user">
                   <span class="glyphicon glyphicon-pencil"></span> Edit
                 </button>
               </td>
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <div class="modal modal-default fade" id="modal-update-user" style="display: none;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">Edit User</h4>
+          </div> <!-- End class modal-header -->
+
+          <div class="modal-body">
+
+            <form v-if="selected_user != null">
+
+              <div v-if="selected_user.agentId !== null" class="form-group">
+                <label for="inputAgent">Agent ID:</label>
+                <input type="text" class="form-control" id="inputAgent" aria-describedby="emailHelp"
+                       :placeholder="selected_user.agentId" disabled>
+                <small id="inputAgentHelp" class="form-text text-muted">Agent ID can't be changed.</small>
+              </div>
+
+              <div v-if="selected_user.username !== null" class="form-group">
+                <label for="inputUsername">Username:</label>
+                <input v-model="update_user.username" class="form-control" id="inputUsername" aria-describedby="emailHelp">
+              </div>
+
+              <div v-if="selected_user.firstName !== null" class="form-group">
+                <label for="inputFirstName">First Name:</label>
+                <input v-model="update_user.firstName" class="form-control" id="inputFirstName" aria-describedby="emailHelp">
+              </div>
+
+              <div v-if="selected_user.lastName !== null" class="form-group">
+                <label for="inputLastName">Last Name:</label>
+                <input v-model="update_user.lastName" class="form-control" id="inputLastName" aria-describedby="emailHelp">
+              </div>
+
+              <div v-if="selected_user.address !== null" class="form-group">
+                <label for="inputAddress">Address:</label>
+                <input v-model="update_user.address" class="form-control" id="inputAddress" aria-describedby="emailHelp">
+              </div>
+
+              <button type="delete" class="btn btn-danger">Delete</button>
+
+            </form>
+
+          </div>  <!-- End class modal-body -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline pull-left sb-btn" data-dismiss="modal">Cancel</button>
+            <button @click="send_user_update" type="button" class="btn btn-primary">Update
+            </button>
+          </div>
+        </div>  <!-- /.modal-content -->
+      </div>      <!-- /.modal-dialog -->
     </div>
 
   </div>
@@ -44,6 +102,14 @@ export default {
         loading: false,
         post: null,
         error: null,
+        selected_user: null,
+        update_user: {
+          username: null,
+          firstName: null,
+          lastName: null,
+          address: null
+        },
+        error_message: "",
         users: []
       }
     },
@@ -52,10 +118,6 @@ export default {
       // already being observed
       this.fetchData()
     },
-//    watch: {
-//      // call again the method if the route changes
-//      '$route': 'fetchData'
-//    },
     methods: {
       fetchData () {
         this.post = null;
@@ -73,10 +135,22 @@ export default {
           .then(function (result) {
             this.loading = false;
             // returns a json format
-            console.log(result);
+//            console.log(result);
             this.users = JSON.parse(result);
 
             console.log(this.users.length);
+
+            this.users.sort(function (a, b) {
+              if (a.agentId > b.agentId) {
+                return 1;
+              } else if (a.agentId < b.agentId) {
+                return -1;
+              } else {
+                return 0;
+              }
+            });
+
+
           }.bind(this))
           .catch(function (err) {
             this.loading = false;
@@ -85,6 +159,16 @@ export default {
           }.bind(this));
 
 
+      },
+      show_user: function (user) {
+        this.selected_user = user;
+        this.update_user.username = user.username;
+        this.update_user.firstName = user.firstName;
+        this.update_user.lastName = user.lastName;
+        this.update_user.address = user.address;
+      },
+      send_user_update: function () {
+        console.log(this.update_user);
       }
     }
   }
