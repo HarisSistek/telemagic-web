@@ -4,6 +4,13 @@
       Loading...
     </div>
     <div v-else>
+
+      <button @click="clear_create_button" type="button" class="btn btn-primary"
+              data-toggle="modal"
+              data-target="#modal-create-user">
+        Create
+      </button>
+
       <table class="table">
         <thead class="thead-dark">
           <tr>
@@ -88,6 +95,52 @@
       </div>      <!-- /.modal-dialog -->
     </div>
 
+    <div class="modal modal-default fade" id="modal-create-user" style="display: none;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <h4 class="modal-title">Create User</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span></button>
+          </div> <!-- End class modal-header -->
+
+          <div class="modal-body">
+
+            <form>
+
+              <div  class="form-group">
+                <label for="inputCreateUsername">Username:</label>
+                <input v-model="create_user.username" class="form-control" id="inputCreateUsername" aria-describedby="emailHelp">
+              </div>
+
+              <div class="form-group">
+                <label for="inputCreateFirstName">First Name:</label>
+                <input v-model="create_user.firstName" class="form-control" id="inputCreateFirstName" aria-describedby="emailHelp">
+              </div>
+
+              <div  class="form-group">
+                <label for="inputCreateLastName">Last Name:</label>
+                <input v-model="create_user.lastName" class="form-control" id="inputCreateLastName" aria-describedby="emailHelp">
+              </div>
+
+              <div class="form-group">
+                <label for="inputCreateAddress">Address:</label>
+                <input v-model="create_user.address" class="form-control" id="inputCreateAddress" aria-describedby="emailHelp">
+              </div>
+
+            </form>
+
+          </div>  <!-- End class modal-body -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline pull-left sb-btn" data-dismiss="modal">Cancel</button>
+            <button @click="send_user_create" type="button" class="btn btn-primary">Create
+            </button>
+          </div>
+        </div>  <!-- /.modal-content -->
+      </div>      <!-- /.modal-dialog -->
+    </div>
+
   </div>
 </template>
 
@@ -104,6 +157,12 @@ export default {
         error: null,
         selected_user: null,
         update_user: {
+          username: null,
+          firstName: null,
+          lastName: null,
+          address: null
+        },
+        create_user: {
           username: null,
           firstName: null,
           lastName: null,
@@ -193,6 +252,14 @@ export default {
           }.bind(this));
 
       },
+      clear_create_button: function () {
+        this.create_user =  {
+          username: null,
+          firstName: null,
+          lastName: null,
+          address: null
+        };
+      },
       send_user_delete: function () {
         console.log("Deleting this user: " + this.selected_user.agentId);
 
@@ -201,6 +268,31 @@ export default {
           method: 'DELETE'
         };
 
+
+        rp(options)
+          .then(function (result) {
+
+            console.log("Result:");
+            console.log(result);
+            location.reload(); // refresh page
+
+          }.bind(this))
+          .catch(function (err) {
+            // something failed
+            console.log("Error:");
+            console.log(err);
+          }.bind(this));
+      },
+      send_user_create: function () {
+        console.log("Creating user");
+        console.log(this.create_user);
+
+        const options = {
+          uri: conf.API_SERVER_HOST + '/users',
+          method: 'POST',
+          body: this.create_user,
+          json: true
+        };
 
         rp(options)
           .then(function (result) {
