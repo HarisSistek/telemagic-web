@@ -38,9 +38,9 @@
         <div class="modal-content">
 
           <div class="modal-header">
+            <h4 class="modal-title">Edit User</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span></button>
-            <h4 class="modal-title">Edit User</h4>
           </div> <!-- End class modal-header -->
 
           <div class="modal-body">
@@ -74,7 +74,7 @@
                 <input v-model="update_user.address" class="form-control" id="inputAddress" aria-describedby="emailHelp">
               </div>
 
-              <button type="delete" class="btn btn-danger">Delete</button>
+              <button @click="send_user_delete" type="delete" class="btn btn-danger">Delete</button>
 
             </form>
 
@@ -168,7 +168,53 @@ export default {
         this.update_user.address = user.address;
       },
       send_user_update: function () {
+        console.log("Updating this user: " +  this.selected_user.agentId);
         console.log(this.update_user);
+
+        const options = {
+          uri: conf.API_SERVER_HOST + '/users/' + this.selected_user.agentId,
+          method: 'PUT',
+          body: this.update_user,
+          json: true
+        };
+
+        rp(options)
+          .then(function (result) {
+
+            console.log("Result:");
+            console.log(result);
+            location.reload(); // refresh page
+
+          }.bind(this))
+          .catch(function (err) {
+            // something failed
+            console.log("Error:");
+            console.log(err);
+          }.bind(this));
+
+      },
+      send_user_delete: function () {
+        console.log("Deleting this user: " + this.selected_user.agentId);
+
+        const options = {
+          uri: conf.API_SERVER_HOST + '/users/' + this.selected_user.agentId,
+          method: 'DELETE'
+        };
+
+
+        rp(options)
+          .then(function (result) {
+
+            console.log("Result:");
+            console.log(result);
+            location.reload(); // refresh page
+
+          }.bind(this))
+          .catch(function (err) {
+            // something failed
+            console.log("Error:");
+            console.log(err);
+          }.bind(this));
       }
     }
   }
